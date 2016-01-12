@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plugin name="mailer">
+	<author>Intelliants LLC</author>
+	<contributor>Intelliants LLC</contributor>
+	<title>Mailer</title>
+	<summary>Allows to perform a mass mailing to all the users of the script.</summary>
+	<version>3.2.0</version>
+	<date>2015-01-30</date>
+	<compatibility>3.2.5</compatibility>
+
+	<actions>
+		<action name="mailer_view" url="mailer/" icon="list" pages="mailer">List</action>
+		<action name="mailer_add" url="mailer/add/" icon="plus" pages="mailer">Add</action>
+	</actions>
+
+	<adminpages>
+		<page name="mailer" url="mailer/" menus="menu">Mailer</page>
+		<page name="mailer_add" url="mailer/add/" action="add" parent="mailer">Add</page>
+	</adminpages>
+
+	<phrases>
+		<phrase category="admin" key="from_name">From Name</phrase>
+		<phrase category="admin" key="from_mail">From Mail</phrase>
+		<phrase category="admin" key="no_rcpt">No Recipients</phrase>
+		<phrase category="admin" key="pause">Pause</phrase>
+		<phrase category="admin" key="queue_added">Emails have been added to the queue.</phrase>
+		<phrase category="admin" key="queue_empty">There are no messages.</phrase>
+		<phrase category="admin" key="queue_removed">Mail queue was removed.</phrase>
+		<phrase category="admin" key="recipients">Recipients</phrase>
+
+		<phrase category="common" key="from_email_err">Sender email is incorrect.</phrase>
+	</phrases>
+
+	<cron name="mailer">*/5 * * * * plugins/mailer/includes/cron/mailer.php</cron>
+
+	<install>
+		<sql>
+			<![CDATA[
+CREATE TABLE `{prefix}mailer_messages` (
+	`id` mediumint(7) unsigned NOT NULL auto_increment,
+	`from_name` varchar(50) NOT NULL,
+	`from_mail` varchar(50) NOT NULL,
+	`subj` varchar(200) NOT NULL,
+	`body` text NOT NULL,
+	`html` tinyint(1) unsigned NOT NULL,
+	`active` tinyint(1) unsigned NOT NULL default 1,
+	`total` mediumint(7) unsigned NOT NULL,
+	PRIMARY KEY (`id`)
+) {mysql_version};
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+CREATE TABLE `{prefix}mailer_recipients` (
+	`id` int(8) unsigned NOT NULL auto_increment,
+	`message_id` mediumint(7) unsigned NOT NULL,
+	`recipients` text NOT NULL,
+	PRIMARY KEY (`id`)
+) {mysql_version};
+			]]>
+		</sql>
+	</install>
+
+	<uninstall>
+		<sql>
+			<![CDATA[
+DROP TABLE IF EXISTS `{prefix}mailer_messages`, `{prefix}mailer_recipients`;
+			]]>
+		</sql>
+	</uninstall>
+</plugin>
